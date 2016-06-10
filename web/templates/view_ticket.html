@@ -1,29 +1,44 @@
 {% extends "base.html" %}
+{% block title %}
+    <title>#{{ticket.id}} - {{ticket.title}}</title>
+{% endblock title %}
 {% block container %}
-  <h2>Ticket {{ticket.id}}</h2>
+  <h2><a href="/ticket/{{ticket.id}}">#{{ticket.id}} - {{ticket.title}}</a></h2><a href="/ticket/{{ticket.id}}/modify/">Edit</a>
+  <p>{{ticket.description}}</p>
   <table id="tickets_table" class="table table-hover">
     <thead>
       <tr>
         <th>ID</th>
-        <th>Title</th>
+        <th>Priority</th>
+        <th>Category</th>
+        <th>Status</th>
         <th>Reporter</th>
         <th>Assignee</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>{{ticket.id}}</td>
-        <td><a href="/ticket/{{ticket.id}}/">{{ticket.title}}</a></td>
-        <td>{{ticket.reporter}}</td>
-        <td>{{ticket.assignee}}</td>
+        <td><a href="/ticket/{{ticket.id}}/">{{ticket.id}}</a></td>
+        <td>{{ticket.priority}}</td>
+        <td>{{ticket.category}}</td>
+        <td>{{ticket.status}}</td>
+        <td><a href="/user/{{ticket.reporter.id}}/">{{ticket.reporter}}</a></td>
+        <td><a href="/user/{{ticket.assignee.id}}/">{{ticket.assignee}}</a></td>
       </tr>
     </tbody>
   </table>
 
   <h2>Comments</h2>
-  {% for comment in comments %}
-    {{comment}}
-  {% endfor %}
+    <form action="/comments/" method="post">{% csrf_token %}
+      {{ form }}
+      <input type="hidden" name="ticket" value="{{ticket.id}}">
+      <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+  <ul class="list-group">
+    {% for comment in comments %}
+    <li class="list-group-item"><span class="badge">{{comment.created_date}}</span><span class="badge"><a href="/user/{{comment.user.id}}/" style="color:white">{{comment.user}}</a></span>{{comment.text}}</li>
+    {% endfor %}
+  </ul>
 {% endblock %}
 
 

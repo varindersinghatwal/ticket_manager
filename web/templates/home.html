@@ -1,27 +1,18 @@
 {% extends "base.html" %}
 {% block container %}
-    <a class="btn btn-default" href="/create_ticket/">Create Ticket</a>
   <h2>Tickets</h2>
-  <table id="tickets_table" class="table table-hover">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Title</th>
-        <th>Reporter</th>
-        <th>Assignee</th>
-      </tr>
-    </thead>
-    <tbody>
+  <div class="list-group">
     {% for ticket in tickets %}
-      <tr>
-        <td>{{ticket.id}}</td>
-        <td><a href="/ticket/{{ticket.id}}/">{{ticket.title}}</a></td>
-        <td>{{ticket.reporter}}</td>
-        <td>{{ticket.assignee}}</td>
-      </tr>
+      <a href="/ticket/{{ticket.id}}/" class="list-group-item">#{{ticket.id}} {{ticket.title}}</a>
     {% endfor %}
-    </tbody>
-  </table>
+  </div>
+
+  <h2>Users</h2>
+  <div class="list-group">
+    {% for jira_user in users %}
+      <a href="/user/{{jira_user.id}}/" class="list-group-item">{{jira_user.first_name}} {{jira_user.last_name}}</a>
+    {% endfor %}
+  </div>
 {% endblock %}
 
 

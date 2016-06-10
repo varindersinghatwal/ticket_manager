@@ -14,17 +14,23 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf.urls import patterns, include, url
+from django.contrib import admin
 from web.views import (login_view, logout_view, register, 
-                       register_success, home, create_ticket,
-                       get_all_tickets, view_ticket)
+                       home, create_ticket, modify_ticket,
+                       get_tickets, view_ticket, comments, view_user)
+
+admin.autodiscover()
  
 urlpatterns = patterns('',
+    url(r'^admin/', include(admin.site.urls)),
     url(r'^login/$', login_view),
     url(r'^logout/$', logout_view),
     url(r'^register/$', register),
-    url(r'^register_success/$', register_success),
     url(r'^$', home),
-    url(r'^create_ticket/$',create_ticket),
-    url(r'^get_tickets/$',get_all_tickets),
+    url(r'^create_ticket/$', create_ticket),
+    url(r'^get_tickets/$', get_tickets),
     url(r'^ticket/(?P<ticket_id>\d+)/$', view_ticket),
+    url(r'^ticket/(?P<ticket_id>\d+)/modify/$', modify_ticket),
+    url(r'^comments/$', comments),
+    url(r'^user/(?P<user_id>\d+)/$', view_user),
 )

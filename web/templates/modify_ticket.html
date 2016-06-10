@@ -1,10 +1,10 @@
 {% extends "base.html" %}
-{% block title %}<title>Create Ticket</title>{% endblock %}
+{% block title %}<title>Modify Ticket</title>{% endblock %}
 {% block container %}
     <form method="post" action=".">{% csrf_token %}
         <table border="0">
             {{ form.as_table }}
         </table>
-        <input class="btn btn-default" type="submit" value="Create"/>
+        <input class="btn btn-default" type="submit" value="Modify"/>
     </form>
 {% endblock %}

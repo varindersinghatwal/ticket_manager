@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}
+    <title>Tickets - {{jira_user.first_name}} {{jira_user.last_name}}</title>
+{% endblock title %}
+{% block container %}
+  <h2><a href="/user/{{jira_user.id}}">{{jira_user.first_name}} {{jira_user.last_name}}</a></h2>
+  <h2>Tickets Assigned</h2>
+  <ul class="list-group">
+    {% for ticket in tickets %}
+      <a href="/ticket/{{ticket.id}}/" class="list-group-item">#{{ticket.id}} - {{ticket.title}}</a>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
+
