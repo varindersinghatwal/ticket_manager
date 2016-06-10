@@ -12,24 +12,25 @@ class Ticket(models.Model):
     category = models.CharField(max_length=1, null=False)
     priority = models.CharField(max_length=1, null=False)
     status = models.CharField(max_length=2, null=False, default='OP')
-    start_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    end_date = models.DateTimeField(null=True, blank=True)
+    start_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(null=True, blank=True)
 
     @classmethod
-    def create(cls, title, description, category, priority, assignee, reporter):
+    def create(cls, title, description, category, priority, assignee, reporter, start_date, end_date):
         ticket = cls(title=title,
                         description=description,
                         category=category,
                         priority=priority,
-                        start_date=datetime.datetime.now(),
                         assignee=assignee,
                         reporter=reporter,
+                        start_date=start_date,
+                        end_date=end_date,
                         )
         ticket.save()
         return ticket
 
     @classmethod
-    def modify(cls, ticket_id, title, description, category, priority, assignee, reporter):
+    def modify(cls, ticket_id, title, description, category, priority, assignee, reporter, start_date, end_date):
         ticket = Ticket.objects.get(id=ticket_id)
         ticket.title = title
         ticket.description = description
@@ -37,12 +38,21 @@ class Ticket(models.Model):
         ticket.priority = priority
         ticket.assignee = assignee
         ticket.reporter = reporter
+        ticket.start_date = start_date
+        ticket.end_date = end_date
         ticket.save()
         return ticket
 
     @classmethod
     def get_all(cls):
         return cls.objects.all()
+   
+    @classmethod
+    def update_status(cls, ticket_id, status):
+        ticket = Ticket.objects.get(id=ticket_id)
+        ticket.status = status
+        ticket.save()
+        return ticket
 
 
 class Comment(models.Model):

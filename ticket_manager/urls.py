@@ -17,7 +17,8 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from web.views import (login_view, logout_view, register, 
                        home, create_ticket, modify_ticket,
-                       get_tickets, view_ticket, comments, view_user)
+                       get_tickets, view_ticket, comments, view_user,
+                       update_ticket_status)
 
 admin.autodiscover()
  
@@ -33,4 +34,5 @@ urlpatterns = patterns('',
     url(r'^ticket/(?P<ticket_id>\d+)/modify/$', modify_ticket),
     url(r'^comments/$', comments),
     url(r'^user/(?P<user_id>\d+)/$', view_user),
+    url(r'^ticket/(?P<ticket_id>\d+)/update_status/$', update_ticket_status),
 )

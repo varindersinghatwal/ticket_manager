@@ -10,6 +10,7 @@ from web.models import Ticket, Comment
 import json
 from ticket_manager.settings import SITE_TITLE, SITE_LOGO_NAME
 from django.core import serializers
+from choices import *
 
 @csrf_protect
 def register(request):
@@ -77,32 +78,19 @@ def create_ticket(request):
             priority = form.cleaned_data['priority']
             assignee = form.cleaned_data['assignee']
             reporter = User.objects.get(id=request.user.id)
+            start_date = form.cleaned_data['start_date']
+            end_date = form.cleaned_data['end_date']
             if assignee:
                 assignee = User.objects.get(username=form.cleaned_data['assignee'])
             else:
                 assignee = None
-            ticket = Ticket.create(title, description, category, priority, assignee, reporter)
+            ticket = Ticket.create(title, description, category, priority, assignee, reporter, start_date, end_date)
             return HttpResponseRedirect('/')
         else:
             return render_to_response('ticket_form.html', RequestContext(request, {'form': form}))
     else:
         form = CreateTicketForm()
         return render_to_response('ticket_form.html', RequestContext(request, {'form': form}))
-
-#@login_required
-#def get_tickets(request):
-#    tickets = Ticket.get_all()
-#    rows = []
-#    for ticket in tickets:
-#        row = {}
-#        row['title'] = ticket.title
-#        row['description'] = ticket.description
-#        row['category'] = ticket.category
-#        row['priority'] = ticket.priority
-#        row['assignee'] = ticket.assignee.first_name + ' ' + ticket.assignee.last_name
-#        row['reporter'] = ticket.reporter.first_name + ' ' + ticket.reporter.last_name
-#        rows.append(row)
-#    return HttpResponse(json.dumps({'data': rows}))
 
 @login_required
 def get_tickets(request):
@@ -112,6 +100,16 @@ def get_tickets(request):
 @login_required
 def view_ticket(request, ticket_id):
     ticket = Ticket.objects.get(id=ticket_id)
+    ticket.category = dict(CATEGORY_CHOICES)[ticket.category]
+    ticket.priority = dict(PRIORITY_CHOICES)[ticket.priority]
+    stri = '<select id="ticket_status" onchange=update_status("'+str(ticket.start_date)+'")>'
+    for choice in STATUS_CHOICES:
+        if ticket.status == choice[0]:
+            stri = stri +  "<option value='"+choice[0]+"' selected>"+str(choice[1])+"</option>"
+        else:
+            stri = stri +  "<option value='"+choice[0]+"'>"+str(choice[1])+"</option>"
+    stri= stri + "</select>"
+    ticket.status =  stri
     comments = Comment.objects.filter(ticket=ticket_id).order_by('-id')
     form = CreateCommentForm()
     return render_to_response('view_ticket.html', RequestContext(request, {'ticket': ticket, 'comments': comments, 'form': form}))
@@ -120,6 +118,7 @@ def view_ticket(request, ticket_id):
 def modify_ticket(request, ticket_id):
     if(request.method == 'POST'):
         form = CreateTicketForm(request.POST)
+        print form.is_valid()
         if form.is_valid():
             title = form.cleaned_data['title']
             description = form.cleaned_data['description']
@@ -127,11 +126,13 @@ def modify_ticket(request, ticket_id):
             priority = form.cleaned_data['priority']
             assignee = form.cleaned_data['assignee']
             reporter = User.objects.get(id=request.user.id)
+            start_date = form.cleaned_data['start_date']
+            end_date = form.cleaned_data['end_date']
             if assignee:
                 assignee = User.objects.get(username=form.cleaned_data['assignee'])
             else:
                 assignee = None
-            ticket = Ticket.modify(ticket_id, title, description, category, priority, assignee, reporter)
+            ticket = Ticket.modify(ticket_id, title, description, category, priority, assignee, reporter, start_date, end_date)
             return HttpResponseRedirect('/ticket/%s'%ticket_id)
         else:
             return render_to_response('ticket_form.html', RequestContext(request, {'form': form}))
@@ -139,7 +140,7 @@ def modify_ticket(request, ticket_id):
         ticket = Ticket.objects.get(id=ticket_id)
         form = CreateTicketForm(initial={'title': ticket.title, 'assignee': ticket.assignee, 'description': ticket.description,
                                          'category': ticket.category, 'priority': ticket.priority,
-                                         'status': ticket.status})
+                                         'status': ticket.status, 'start_date': ticket.start_date, 'end_date': ticket.end_date})
         return render_to_response('modify_ticket.html', RequestContext(request, {'ticket': ticket, 'form': form}))
 
 
@@ -160,3 +161,9 @@ def view_user(request, user_id):
     tickets = Ticket.objects.filter(assignee=user_id).order_by('-id')
     jira_user = User.objects.get(id=user_id)
     return render_to_response('view_user.html', RequestContext(request, {'jira_user': jira_user, 'tickets': tickets}))
+
+@login_required
+def update_ticket_status(request, ticket_id):
+    status = request.GET['status']
+    ticket = Ticket.update_status(int(ticket_id), str(status))
+    return HttpResponse(json.dumps({'data': '1'}))

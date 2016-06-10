@@ -14,6 +14,8 @@
         <th>Status</th>
         <th>Reporter</th>
         <th>Assignee</th>
+        <th>Start Date</th>
+        <th>End Date</th>
       </tr>
     </thead>
     <tbody>
@@ -21,9 +23,11 @@
         <td><a href="/ticket/{{ticket.id}}/">{{ticket.id}}</a></td>
         <td>{{ticket.priority}}</td>
         <td>{{ticket.category}}</td>
-        <td>{{ticket.status}}</td>
+        <td>{{ticket.status | safe}}</td>
         <td><a href="/user/{{ticket.reporter.id}}/">{{ticket.reporter}}</a></td>
         <td><a href="/user/{{ticket.assignee.id}}/">{{ticket.assignee}}</a></td>
+        <td>{{ticket.start_date}}</td>
+        <td>{{ticket.end_date}}</td>
       </tr>
     </tbody>
   </table>

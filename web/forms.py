@@ -1,5 +1,6 @@
 import re
 from django import forms
+from django.forms.extras import SelectDateWidget
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from choices import CATEGORY_CHOICES, PRIORITY_CHOICES, STATUS_CHOICES
@@ -40,12 +41,13 @@ class LoginForm(forms.Form):
 
 
 class CreateTicketForm(forms.Form):
-    title = forms.CharField(widget=forms.TextInput(attrs={'required':True, 'class': 'form-control'}), label=_("Title"))
-    description = forms.CharField(widget=forms.Textarea(attrs={'required':True, 'class': 'form-control'}), label=_("Description"))
-    category = forms.ChoiceField(choices = CATEGORY_CHOICES, widget=forms.Select(attrs={'required':True, 'class': 'form-control'}), required=True, label=_("Category"))
-    priority = forms.ChoiceField(choices = PRIORITY_CHOICES, widget=forms.Select(attrs={'required':True, 'class': 'form-control'}), required=True, label=_("Priority"))
-    status = forms.ChoiceField(choices = STATUS_CHOICES, widget=forms.Select(attrs={'required':True, 'class': 'form-control'}), required=True, label=_("Status"))
-    assignee = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.Select(attrs={'required': False, 'class': 'form-control'}))
+    title = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}), label=_("Title"), required=True)
+    description = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control'}), label=_("Description"), required=True)
+    category = forms.ChoiceField(choices = CATEGORY_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}), required=True, label=_("Category"))
+    priority = forms.ChoiceField(choices = PRIORITY_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}), required=True, label=_("Priority"))
+    assignee = forms.ModelChoiceField(queryset=User.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}), required=False)
+    start_date = forms.CharField(widget=forms.TextInput())
+    end_date = forms.CharField(widget=forms.TextInput())
 
 
 class CreateCommentForm(forms.Form):
