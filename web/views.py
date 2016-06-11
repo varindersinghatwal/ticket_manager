@@ -6,7 +6,7 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext
 from django.contrib.auth.models import User
-from web.models import Ticket, Comment
+from web.models import Ticket, Comment, TicketHistory
 import json
 from ticket_manager.settings import SITE_TITLE, SITE_LOGO_NAME
 from django.core import serializers
@@ -111,8 +111,9 @@ def view_ticket(request, ticket_id):
     stri= stri + "</select>"
     ticket.status =  stri
     comments = Comment.objects.filter(ticket=ticket_id).order_by('-id')
+    history = TicketHistory.objects.filter(ticket=ticket_id).order_by('-id')
     form = CreateCommentForm()
-    return render_to_response('view_ticket.html', RequestContext(request, {'ticket': ticket, 'comments': comments, 'form': form}))
+    return render_to_response('view_ticket.html', RequestContext(request, {'ticket': ticket, 'comments': comments, 'history':history, 'form': form}))
 
 @login_required
 def modify_ticket(request, ticket_id):

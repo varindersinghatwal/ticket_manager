@@ -73,5 +73,5 @@ class Comment(models.Model):
 class TicketHistory(models.Model):
     ticket = models.ForeignKey(Ticket)
     user = models.ForeignKey(User)
-    status = models.CharField(max_length=2, null=False, default='OP')
-    udpate_time = models.DateTimeField(auto_now_add=True, null=False)
+    status = models.CharField(choices=STATUS_CHOICES, max_length=2, null=False, default='OP')
+    update_time = models.DateTimeField(auto_now_add=True, null=False)

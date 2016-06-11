@@ -32,6 +32,22 @@
     </tbody>
   </table>
 
+  <h3>History<h3>
+  <div class="well">
+    <table class="table" style="font-size:12px;">
+      <thead><th>Status</th><th>Updated by</th><th>Updated time</th></thead>
+      <tbody>
+	{% for hist in history %}
+	  <tr>
+	    <td>{{ hist.get_status_display }}</td>
+	    <td>{{ hist.user.first_name }}</td>
+	    <td>{{ hist.update_time }}</td>
+	  </tr>
+	{% endfor %}
+      </tbody>
+    </table>
+  </div>
+
   <h2>Comments</h2>
     <form action="/comments/" method="post">{% csrf_token %}
       {{ form }}
