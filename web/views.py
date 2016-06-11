@@ -165,5 +165,6 @@ def view_user(request, user_id):
 @login_required
 def update_ticket_status(request, ticket_id):
     status = request.GET['status']
-    ticket = Ticket.update_status(int(ticket_id), str(status))
+    user = User.objects.get(id=request.user.id)
+    ticket = Ticket.update_status(user, int(ticket_id), str(status))
     return HttpResponse(json.dumps({'data': '1'}))

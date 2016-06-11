@@ -27,6 +27,10 @@ class Ticket(models.Model):
                         end_date=end_date,
                         )
         ticket.save()
+        history = TicketHistory(ticket=ticket,
+                                user=reporter,
+                                status=ticket.status)
+        history.save()
         return ticket
 
     @classmethod
@@ -48,10 +52,14 @@ class Ticket(models.Model):
         return cls.objects.all()
    
     @classmethod
-    def update_status(cls, ticket_id, status):
+    def update_status(cls, user, ticket_id, status):
         ticket = Ticket.objects.get(id=ticket_id)
         ticket.status = status
         ticket.save()
+        history = TicketHistory(ticket=ticket,
+                                user=user,
+                                status=status)
+        history.save()
         return ticket
 
 
@@ -62,3 +70,8 @@ class Comment(models.Model):
     created_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     modified_date = models.DateTimeField(null=True, blank=True)
 
+class TicketHistory(models.Model):
+    ticket = models.ForeignKey(Ticket)
+    user = models.ForeignKey(User)
+    status = models.CharField(max_length=2, null=False, default='OP')
+    udpate_time = models.DateTimeField(auto_now_add=True, null=False)
