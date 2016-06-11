@@ -9,9 +9,9 @@ class Ticket(models.Model):
     assignee = models.ForeignKey(User, null=True, blank=True, related_name='assignee')
     title = models.TextField(null=False, blank=False)
     description = models.TextField(null=True, blank=True)
-    category = models.CharField(max_length=1, null=False)
-    priority = models.CharField(max_length=1, null=False)
-    status = models.CharField(max_length=2, null=False, default='OP')
+    category = models.CharField(max_length=1, choices=CATEGORY_CHOICES, null=False)
+    priority = models.CharField(max_length=1, choices=PRIORITY_CHOICES, null=False)
+    status = models.CharField(max_length=2, choices=STATUS_CHOICES, null=False, default='OP')
     start_date = models.DateField(blank=True, null=True)
     end_date = models.DateField(null=True, blank=True)
 
